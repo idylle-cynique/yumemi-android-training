@@ -13,6 +13,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import jp.co.yumemi.droidtraining.ui.theme.YumemiTheme
 
@@ -33,6 +34,8 @@ class MainActivity : ComponentActivity() {
                     },
                 ) { innerPadding ->
                     Box(
+//                        box→picture, text text
+//                        button, button
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize()
@@ -51,5 +54,13 @@ fun Greeting(modifier: Modifier = Modifier) {
     Text(
         text = "Hello World!",
         modifier = modifier
+    )
+}
+
+@Composable
+fun PictureOfWeather(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.sunny),
+        contentDescription = "A Weather Icon"
     )
 }
