@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,8 +43,6 @@ class MainActivity : ComponentActivity() {
                     },
                 ) { innerPadding ->
                     Box(
-                        //  box→picture, text text
-                        //  button, button
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize()
@@ -53,23 +52,28 @@ class MainActivity : ComponentActivity() {
                             Image(
                                 painter = painterResource(id = R.drawable.sunny),
                                 contentDescription = "A Weather Icon",
-                                modifier = Modifier.fillMaxWidth(fraction = 0.5f),
+                                modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f)
+                                ,
                                 contentScale = ContentScale.Fit
                             )
                             Row(){
+                                Text(
+                                    text = "text1"
+                                )
+                                Text(
+                                    text = "text2"
+                                )
+                            }
+                            Row(){
                                 Button(
-                                    onClick = { }
-                                ) {
-                                    Text(
-                                        text = "Button 1"
-                                    )
+                                    onClick = {}
+                                ){
+                                    Text(text = "button")
                                 }
                                 Button(
-                                    onClick = { }
-                                ) {
-                                    Text(
-                                        text = "Button 2"
-                                    )
+                                    onClick = {}
+                                ){
+                                    Text(text = "button")
                                 }
                             }
                         }
