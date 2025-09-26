@@ -7,11 +7,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -49,21 +52,28 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                     ) {
                         Column(){
-                            Image(
-                                painter = painterResource(id = R.drawable.sunny),
-                                contentDescription = "A Weather Icon",
-                                modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f)
-                                ,
-                                contentScale = ContentScale.Fit
-                            )
-                            Row(){
-                                Text(
-                                    text = "text1"
+                            Column(){
+                                Image(
+                                    painter = painterResource(id = R.drawable.sunny),
+                                    contentDescription = "A Weather Icon",
+                                    modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f)
+                                    ,
+                                    contentScale = ContentScale.Fit
                                 )
-                                Text(
-                                    text = "text2"
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                                ){
+                                    Text(
+                                        text = "text1",
+                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                                    )
+                                    Text(
+                                        text = "text2",
+                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                                    )
+                                }
                             }
+                            Spacer(modifier = Modifier.height(80.dp))
                             Row(){
                                 Button(
                                     onClick = {}
