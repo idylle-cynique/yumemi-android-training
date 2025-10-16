@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,9 +26,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import jp.co.yumemi.droidtraining.ui.theme.YumemiTheme
 
@@ -52,7 +57,8 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                     ) {
                         Column(){
-                            Column(){
+                            Column(
+                            ){
                                 Image(
                                     painter = painterResource(id = R.drawable.sunny),
                                     contentDescription = "A Weather Icon",
@@ -61,29 +67,42 @@ class MainActivity : ComponentActivity() {
                                     contentScale = ContentScale.Fit
                                 )
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                                    modifier = Modifier.fillMaxWidth(fraction = 0.5f),
+                                    horizontalArrangement = Arrangement.SpaceAround
                                 ){
                                     Text(
-                                        text = "text1",
-                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                                        text = "10℃",
+                                        color = Color.Blue,
+                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f),
                                     )
                                     Text(
-                                        text = "text2",
-                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+                                        text = "20℃",
+                                        color = Color.Red,
+                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f),
                                     )
                                 }
                             }
                             Spacer(modifier = Modifier.height(80.dp))
-                            Row(){
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ){
                                 Button(
-                                    onClick = {}
+                                    onClick = {},
+                                    colors = ButtonDefaults.buttonColors(
+                                        Color.Black
+                                    ),
+                                    shape = CutCornerShape(size = 0.dp)
                                 ){
-                                    Text(text = "button")
+                                    Text(text = "RELOAD")
                                 }
                                 Button(
-                                    onClick = {}
+                                    onClick = {},
+                                    colors = ButtonDefaults.buttonColors(
+                                        Color.Black
+                                    ),
+                                    shape = CutCornerShape(size = 0.dp)
                                 ){
-                                    Text(text = "button")
+                                    Text(text = "NEXT")
                                 }
                             }
                         }
