@@ -64,35 +64,36 @@ class MainActivity : ComponentActivity() {
                                     contentDescription = "A Weather Icon",
                                     modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f)
                                     ,
-                                    contentScale = ContentScale.Fit
                                 )
                                 Row(
                                     modifier = Modifier.fillMaxWidth(fraction = 0.5f),
-                                    horizontalArrangement = Arrangement.SpaceAround
                                 ){
                                     Text(
                                         text = "10℃",
+                                        textAlign = TextAlign.Center,
                                         color = Color.Blue,
-                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f),
+                                        modifier = Modifier.weight(1.0f),
                                     )
                                     Text(
                                         text = "20℃",
+                                        textAlign = TextAlign.Center,
                                         color = Color.Red,
-                                        modifier = Modifier.fillMaxWidth(fraction = 0.5f),
+                                        modifier = Modifier.weight(1.0f),
                                     )
                                 }
                             }
                             Spacer(modifier = Modifier.height(80.dp))
                             Row(
-                                horizontalArrangement = Arrangement.SpaceAround
+                                modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                             ){
                                 Button(
                                     onClick = {},
                                     colors = ButtonDefaults.buttonColors(
                                         Color.Black
                                     ),
-                                    shape = CutCornerShape(size = 0.dp)
-                                ){
+                                    modifier = Modifier.weight(1.0f),
+                                    shape = CutCornerShape(size = 0.dp),
+                                    ){
                                     Text(text = "RELOAD")
                                 }
                                 Button(
@@ -100,8 +101,9 @@ class MainActivity : ComponentActivity() {
                                     colors = ButtonDefaults.buttonColors(
                                         Color.Black
                                     ),
-                                    shape = CutCornerShape(size = 0.dp)
-                                ){
+                                    modifier = Modifier.weight(1.0f),
+                                    shape = CutCornerShape(size = 0.dp),
+                                    ){
                                     Text(text = "NEXT")
                                 }
                             }
