@@ -57,59 +57,67 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                     ) {
                         Column(){
-                            Column(
-                            ){
-                                Image(
-                                    painter = painterResource(id = R.drawable.sunny),
-                                    contentDescription = "A Weather Icon",
-                                    modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f)
-                                    ,
-                                )
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(fraction = 0.5f),
-                                ){
-                                    Text(
-                                        text = "10℃",
-                                        textAlign = TextAlign.Center,
-                                        color = Color.Blue,
-                                        modifier = Modifier.weight(1.0f),
-                                    )
-                                    Text(
-                                        text = "20℃",
-                                        textAlign = TextAlign.Center,
-                                        color = Color.Red,
-                                        modifier = Modifier.weight(1.0f),
-                                    )
-                                }
-                            }
+                            WeatherInfo()
                             Spacer(modifier = Modifier.height(80.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(fraction = 0.5f)
-                            ){
-                                Button(
-                                    onClick = {},
-                                    colors = ButtonDefaults.buttonColors(
-                                        Color.Black
-                                    ),
-                                    modifier = Modifier.weight(1.0f),
-                                    shape = CutCornerShape(size = 0.dp),
-                                    ){
-                                    Text(text = "RELOAD")
-                                }
-                                Button(
-                                    onClick = {},
-                                    colors = ButtonDefaults.buttonColors(
-                                        Color.Black
-                                    ),
-                                    modifier = Modifier.weight(1.0f),
-                                    shape = CutCornerShape(size = 0.dp),
-                                    ){
-                                    Text(text = "NEXT")
-                                }
-                            }
+                            ActionButtons()
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun WeatherInfo(){
+        Column(){
+            Image(
+                painter = painterResource(id = R.drawable.sunny),
+                contentDescription = "A Weather Icon",
+                modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f)
+                ,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(fraction = 0.5f),
+            ){
+                Text(
+                    text = "10℃",
+                    textAlign = TextAlign.Center,
+                    color = Color.Blue,
+                    modifier = Modifier.weight(1.0f),
+                )
+                Text(
+                    text = "20℃",
+                    textAlign = TextAlign.Center,
+                    color = Color.Red,
+                    modifier = Modifier.weight(1.0f),
+                )
+            }
+        }
+    }
+    @Composable
+    fun ActionButtons() {
+        Row(
+            modifier = Modifier.fillMaxWidth(fraction = 0.5f)
+        ){
+            Button(
+                onClick = {},
+                colors = ButtonDefaults.buttonColors(
+                    Color.Black
+                ),
+                modifier = Modifier.weight(1.0f),
+                shape = CutCornerShape(size = 0.dp),
+            ){
+                Text(text = "RELOAD")
+            }
+            Button(
+                onClick = {},
+                colors = ButtonDefaults.buttonColors(
+                    Color.Black
+                ),
+                modifier = Modifier.weight(1.0f),
+                shape = CutCornerShape(size = 0.dp),
+            ){
+                Text(text = "NEXT")
             }
         }
     }
