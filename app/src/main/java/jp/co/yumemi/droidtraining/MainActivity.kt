@@ -21,11 +21,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -55,23 +56,17 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding),
                     ) {
-                        Column(){
-                            var changedWeather: Int? = null
+                        Column() {
+                            val changedWeather = remember { mutableStateOf<Int?>(null) }
 
-                            WeatherInfo(changedWeather)
+                            LaunchedEffect(Unit) {
+                                changedWeather.value = fetchSimpleWeather()
+                            }
+
+                            WeatherInfo(changedWeather.value)
                             Spacer(modifier = Modifier.height(80.dp))
-                            ActionButtons( {
-                                val weatherApi = YumemiWeather(context = this@MainActivity)
-
-                                val weatherString = weatherApi.fetchSimpleWeather()
-
-                                changedWeather =  when (weatherString) {
-                                    "sunny" -> R.drawable.sunny
-                                    "cloudy" -> R.drawable.cloudy
-                                    "rainy" -> R.drawable.rainy
-                                    "snow" -> R.drawable.snow
-                                    else -> throw IllegalArgumentException("Unexpected weather: $weatherString")
-                                }
+                            ActionButtons({
+                                changedWeather.value = fetchSimpleWeather()
                             })
                         }
                     }
@@ -81,8 +76,8 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun WeatherInfo(changedWeather: Int?){
-        Column(){
+    fun WeatherInfo(changedWeather: Int?) {
+        Column() {
             if (changedWeather != null) {
                 Image(
                     painter = painterResource(id = changedWeather),
@@ -92,7 +87,7 @@ class MainActivity : ComponentActivity() {
             }
             Row(
                 modifier = Modifier.fillMaxWidth(fraction = 0.5f),
-            ){
+            ) {
                 Text(
                     text = "10℃",
                     textAlign = TextAlign.Center,
@@ -108,11 +103,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     @Composable
     fun ActionButtons(onClick: () -> Unit) {
         Row(
             modifier = Modifier.fillMaxWidth(fraction = 0.5f)
-        ){
+        ) {
             Button(
                 onClick = onClick,
                 colors = ButtonDefaults.buttonColors(
@@ -120,7 +116,7 @@ class MainActivity : ComponentActivity() {
                 ),
                 modifier = Modifier.weight(1.0f),
                 shape = CutCornerShape(size = 0.dp),
-            ){
+            ) {
                 Text(text = "RELOAD")
             }
             Button(
@@ -130,9 +126,23 @@ class MainActivity : ComponentActivity() {
                 ),
                 modifier = Modifier.weight(1.0f),
                 shape = CutCornerShape(size = 0.dp),
-            ){
+            ) {
                 Text(text = "NEXT")
             }
+        }
+    }
+
+    fun fetchSimpleWeather(): Int {
+        val weatherApi = YumemiWeather(context = this)
+
+        val weatherString = weatherApi.fetchSimpleWeather()
+
+        return when (weatherString) {
+            "sunny" -> R.drawable.sunny
+            "cloudy" -> R.drawable.cloudy
+            "rainy" -> R.drawable.rainy
+            "snow" -> R.drawable.snow
+            else -> throw IllegalArgumentException("Unexpected weather: $weatherString")
         }
     }
 }
