@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun WeatherInfo(changedWeather: Int?) {
-        Column() {
+        Column {
             if (changedWeather != null) {
                 Image(
                     painter = painterResource(id = changedWeather),
