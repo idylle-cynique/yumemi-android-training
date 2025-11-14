@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding),
                     ) {
-                        Column() {
+                        Column {
                             val changedWeather = remember { mutableStateOf<Int?>(null) }
 
                             LaunchedEffect(Unit) {
