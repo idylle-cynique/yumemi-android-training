@@ -31,8 +31,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import jp.co.yumemi.api.UnknownException
 import jp.co.yumemi.droidtraining.ui.theme.YumemiTheme
 import jp.co.yumemi.api.YumemiWeather
+import jp.co.yumemi.droidtraining.ui.state.Weather
+import jp.co.yumemi.droidtraining.ui.state.WeatherState
 
 class MainActivity : ComponentActivity() {
 
@@ -132,17 +135,30 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun fetchSimpleWeather(): Int {
+    fun fetchSimpleWeather(): WeatherState {
         val weatherApi = YumemiWeather(context = this)
 
-        val weatherString = weatherApi.fetchSimpleWeather()
+        val weatherInfo: WeatherState = try {
+            val weatherString = when(weatherApi.fetchThrowsWeather()) {
+                "sunny" -> Weather.Sunny
+                "cloudy" -> Weather.Cloudy
+                "rainy" -> Weather.Rainy
+                else -> Weather.Snow
+            }
 
-        return when (weatherString) {
-            "sunny" -> R.drawable.sunny
-            "cloudy" -> R.drawable.cloudy
-            "rainy" -> R.drawable.rainy
-            "snow" -> R.drawable.snow
-            else -> throw IllegalArgumentException("Unexpected weather: $weatherString")
+            WeatherState(weather = weatherString, showErrorDialog = false)
+        } catch (e: UnknownException) {
+            WeatherState(weather = null, showErrorDialog = true)
         }
+
+        return weatherInfo
     }
 }
+
+//when (weatherInfo.weather) {
+//    Weather.Sunny -> R.drawable.sunny
+//    Weather.Cloudy -> R.drawable.cloudy
+//    Weather.Rainy ->  -> R.drawable.rainy
+//    Weather.Snow -> R.drawable.snow
+//    else -> throw IllegalArgumentException("Unexpected weather: $weatherInfo.weather")
+//}
