@@ -22,8 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,16 +62,19 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                     ) {
                         Column() {
-                            val changedWeather = remember { mutableStateOf<Int?>(null) }
-
-                            LaunchedEffect(Unit) {
-                                changedWeather.value = fetchSimpleWeather()
+                            var changedWeather by remember {
+                                mutableStateOf(WeatherState(weather = null, showErrorDialog = false))
                             }
 
-                            WeatherInfo(changedWeather.value)
+                            // アプリ起動時だけ実行
+                            LaunchedEffect(Unit) {
+                                changedWeather = fetchSimpleWeather()
+                            }
+
+                            WeatherInfo(changedWeather)
                             Spacer(modifier = Modifier.height(80.dp))
                             ActionButtons({
-                                changedWeather.value = fetchSimpleWeather()
+                                changedWeather = fetchSimpleWeather()
                             })
                         }
                     }
@@ -79,11 +84,11 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun WeatherInfo(changedWeather: Int?) {
+    fun WeatherInfo(changedWeather: WeatherState) {
         Column() {
-            if (changedWeather != null) {
+            if (changedWeather.weather != null) {
                 Image(
-                    painter = painterResource(id = changedWeather),
+                    painter = painterResource(id = changedWeather.weather.drawableRes),
                     contentDescription = "A Weather Icon",
                     modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f),
                 )
