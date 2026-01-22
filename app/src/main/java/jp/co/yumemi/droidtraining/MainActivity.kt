@@ -94,8 +94,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    @Composable
     fun WeatherInfo(changedWeather: WeatherState) {
         Column() {
             if (changedWeather.weather != null) {
