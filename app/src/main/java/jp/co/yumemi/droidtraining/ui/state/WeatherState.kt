@@ -3,7 +3,7 @@ package jp.co.yumemi.droidtraining.ui.state
 import androidx.annotation.DrawableRes
 import jp.co.yumemi.droidtraining.R
 
-data class WeatherState (
+data class WeatherState(
     val weather: Weather?,
     val showErrorDialog: Boolean
 )
