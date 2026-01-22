@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -71,7 +72,18 @@ class MainActivity : ComponentActivity() {
                                 changedWeather = fetchSimpleWeather()
                             }
 
-                            WeatherInfo(changedWeather)
+                            if (changedWeather.showErrorDialog) {
+                                WeatherAlertDialog(
+                                    reloadAction = {
+                                        changedWeather = fetchSimpleWeather()
+                                    },
+                                    cancelAction = {
+                                        changedWeather = changedWeather.copy(showErrorDialog = false)
+                                    }
+                                )
+                            } else {
+                                WeatherInfo(changedWeather) // ここで表示している
+                            }
                             Spacer(modifier = Modifier.height(80.dp))
                             ActionButtons({
                                 changedWeather = fetchSimpleWeather()
@@ -90,7 +102,9 @@ class MainActivity : ComponentActivity() {
                 Image(
                     painter = painterResource(id = changedWeather.weather.drawableRes),
                     contentDescription = "A Weather Icon",
-                    modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f),
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.5f)
+                        .aspectRatio(1.0f),
                 )
             }
             Row(
@@ -140,6 +154,37 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    fun WeatherAlertDialog(
+        reloadAction: () -> Unit,
+        cancelAction: () -> Unit
+    ) {
+        AlertDialog(
+            title = {
+                Text(text = "Error")
+            },
+            text = {
+                Text(text = "エラーが発生しました。")
+            },
+            dismissButton = {
+                Button(
+                    onClick = { cancelAction() }
+                ) {
+                    Text("CANCEL")
+                }
+            },
+            onDismissRequest = { cancelAction() },
+            confirmButton = {
+                Button(
+                    onClick = { reloadAction() }
+                ) {
+                    Text("RELOAD")
+                }
+            }
+        )
+    }
+
+
     fun fetchSimpleWeather(): WeatherState {
         val weatherApi = YumemiWeather(context = this)
 
@@ -159,11 +204,3 @@ class MainActivity : ComponentActivity() {
         return weatherInfo
     }
 }
-
-//when (weatherInfo.weather) {
-//    Weather.Sunny -> R.drawable.sunny
-//    Weather.Cloudy -> R.drawable.cloudy
-//    Weather.Rainy ->  -> R.drawable.rainy
-//    Weather.Snow -> R.drawable.snow
-//    else -> throw IllegalArgumentException("Unexpected weather: $weatherInfo.weather")
-//}
