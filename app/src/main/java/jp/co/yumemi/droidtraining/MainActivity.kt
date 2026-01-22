@@ -94,6 +94,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    @Composable
     fun WeatherInfo(changedWeather: WeatherState) {
         Column() {
             if (changedWeather.weather != null) {
@@ -187,14 +189,14 @@ class MainActivity : ComponentActivity() {
         val weatherApi = YumemiWeather(context = this)
 
         val weatherInfo: WeatherState = try {
-            val weatherString = when(weatherApi.fetchThrowsWeather()) {
+            val weatherEnum = when(weatherApi.fetchThrowsWeather()) {
                 "sunny" -> Weather.Sunny
                 "cloudy" -> Weather.Cloudy
                 "rainy" -> Weather.Rainy
                 else -> Weather.Snow
             }
 
-            WeatherState(weather = weatherString, showErrorDialog = false)
+            WeatherState(weather = weatherEnum, showErrorDialog = false)
         } catch (e: UnknownException) {
             WeatherState(weather = null, showErrorDialog = true)
         }
