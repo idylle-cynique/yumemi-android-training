@@ -3,6 +3,7 @@ package jp.co.yumemi.droidtraining
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,8 @@ import jp.co.yumemi.droidtraining.ui.state.WeatherState
 
 class MainActivity : ComponentActivity() {
 
+    private val viewModel: WeatherViewModel by viewModels { WeatherViewModel.Factory }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
                             // アプリ起動時だけ実行
                             LaunchedEffect(Unit) {
-                                changedWeather = fetchSimpleWeather()
+                                changedWeather = viewModel.fetchSimpleWeather()
                             }
 
                             if (changedWeather.showErrorDialog) {
