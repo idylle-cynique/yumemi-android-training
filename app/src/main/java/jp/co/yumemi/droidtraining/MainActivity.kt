@@ -3,6 +3,7 @@ package jp.co.yumemi.droidtraining
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,13 +35,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import jp.co.yumemi.api.UnknownException
-import jp.co.yumemi.droidtraining.ui.theme.YumemiTheme
-import jp.co.yumemi.api.YumemiWeather
-import jp.co.yumemi.droidtraining.ui.state.Weather
 import jp.co.yumemi.droidtraining.ui.state.WeatherState
+import jp.co.yumemi.droidtraining.ui.theme.YumemiTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: WeatherViewModel by viewModels { WeatherViewModel.Factory }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,44 +50,39 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = {
-                                Text(text = stringResource(id = R.string.app_name))
-                            },
+                            title = { Text(text = stringResource(id = R.string.app_name)) },
                         )
-                    },
+                    }
                 ) { innerPadding ->
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
                     ) {
                         Column() {
                             var changedWeather by remember {
-                                mutableStateOf(WeatherState(weather = null, showErrorDialog = false))
+                                mutableStateOf(
+                                    WeatherState(weather = null, showErrorDialog = false)
+                                )
                             }
 
                             // アプリ起動時だけ実行
-                            LaunchedEffect(Unit) {
-                                changedWeather = fetchSimpleWeather()
-                            }
+                            LaunchedEffect(Unit) { changedWeather = viewModel.fetchSimpleWeather() }
 
                             if (changedWeather.showErrorDialog) {
                                 WeatherAlertDialog(
                                     reloadAction = {
-                                        changedWeather = fetchSimpleWeather()
+                                        changedWeather = viewModel.fetchSimpleWeather()
                                     },
                                     cancelAction = {
-                                        changedWeather = changedWeather.copy(showErrorDialog = false)
+                                        changedWeather =
+                                            changedWeather.copy(showErrorDialog = false)
                                     }
                                 )
                             } else {
-                                WeatherInfo(changedWeather) // ここで表示している
+                                WeatherInfo(changedWeather)
                             }
                             Spacer(modifier = Modifier.height(80.dp))
-                            ActionButtons({
-                                changedWeather = fetchSimpleWeather()
-                            })
+                            ActionButtons({ changedWeather = viewModel.fetchSimpleWeather() })
                         }
                     }
                 }
@@ -102,9 +97,7 @@ class MainActivity : ComponentActivity() {
                 Image(
                     painter = painterResource(id = changedWeather.weather.drawableRes),
                     contentDescription = "A Weather Icon",
-                    modifier = Modifier
-                        .fillMaxWidth(fraction = 0.5f)
-                        .aspectRatio(1.0f),
+                    modifier = Modifier.fillMaxWidth(fraction = 0.5f).aspectRatio(1.0f),
                 )
             }
             Row(
@@ -128,79 +121,30 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ActionButtons(onClick: () -> Unit) {
-        Row(
-            modifier = Modifier.fillMaxWidth(fraction = 0.5f)
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(fraction = 0.5f)) {
             Button(
                 onClick = onClick,
-                colors = ButtonDefaults.buttonColors(
-                    Color.Black
-                ),
+                colors = ButtonDefaults.buttonColors(Color.Black),
                 modifier = Modifier.weight(1.0f),
                 shape = CutCornerShape(size = 0.dp),
-            ) {
-                Text(text = "RELOAD")
-            }
+            ) { Text(text = "RELOAD") }
             Button(
                 onClick = {},
-                colors = ButtonDefaults.buttonColors(
-                    Color.Black
-                ),
+                colors = ButtonDefaults.buttonColors(Color.Black),
                 modifier = Modifier.weight(1.0f),
                 shape = CutCornerShape(size = 0.dp),
-            ) {
-                Text(text = "NEXT")
-            }
+            ) { Text(text = "NEXT") }
         }
     }
 
     @Composable
-    fun WeatherAlertDialog(
-        reloadAction: () -> Unit,
-        cancelAction: () -> Unit
-    ) {
+    fun WeatherAlertDialog(reloadAction: () -> Unit, cancelAction: () -> Unit) {
         AlertDialog(
-            title = {
-                Text(text = "Error")
-            },
-            text = {
-                Text(text = "エラーが発生しました。")
-            },
-            dismissButton = {
-                Button(
-                    onClick = { cancelAction() }
-                ) {
-                    Text("CANCEL")
-                }
-            },
+            title = { Text(text = "Error") },
+            text = { Text(text = "エラーが発生しました。") },
+            dismissButton = { Button(onClick = { cancelAction() }) { Text("CANCEL") } },
             onDismissRequest = { cancelAction() },
-            confirmButton = {
-                Button(
-                    onClick = { reloadAction() }
-                ) {
-                    Text("RELOAD")
-                }
-            }
+            confirmButton = { Button(onClick = { reloadAction() }) { Text("RELOAD") } }
         )
-    }
-
-
-    fun fetchSimpleWeather(): WeatherState {
-        val weatherApi = YumemiWeather(context = this)
-
-        val weatherInfo: WeatherState = try {
-            val weatherEnum = when(weatherApi.fetchThrowsWeather()) {
-                "sunny" -> Weather.Sunny
-                "cloudy" -> Weather.Cloudy
-                "rainy" -> Weather.Rainy
-                else -> Weather.Snow
-            }
-
-            WeatherState(weather = weatherEnum, showErrorDialog = false)
-        } catch (e: UnknownException) {
-            WeatherState(weather = null, showErrorDialog = true)
-        }
-
-        return weatherInfo
     }
 }
