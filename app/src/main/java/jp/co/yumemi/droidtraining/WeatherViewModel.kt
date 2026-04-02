@@ -1,11 +1,9 @@
 package jp.co.yumemi.droidtraining
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import jp.co.yumemi.api.UnknownException
 import jp.co.yumemi.api.YumemiWeather
 import jp.co.yumemi.droidtraining.ui.state.Weather
@@ -15,7 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class WeatherViewModel(val weatherApi: YumemiWeather) : ViewModel() {
+@HiltViewModel
+class WeatherViewModel @Inject constructor(val weatherApi: YumemiWeather) : ViewModel() {
 
     private val _weatherState =
             MutableStateFlow(WeatherState(weather = null, showErrorDialog = false))
@@ -45,17 +44,5 @@ class WeatherViewModel(val weatherApi: YumemiWeather) : ViewModel() {
 
     fun dismissErrorDialog() {
         _weatherState.value = _weatherState.value.copy(showErrorDialog = false)
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer<WeatherViewModel> {
-                val application =
-                        this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Context
-                val weatherApi = YumemiWeather(context = application)
-
-                WeatherViewModel(weatherApi = weatherApi)
-            }
-        }
     }
 }

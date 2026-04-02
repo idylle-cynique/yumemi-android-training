@@ -33,12 +33,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dagger.hilt.android.AndroidEntryPoint
 import jp.co.yumemi.droidtraining.ui.state.WeatherState
 import jp.co.yumemi.droidtraining.ui.theme.YumemiTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: WeatherViewModel by viewModels { WeatherViewModel.Factory }
+    private val viewModel: WeatherViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
