@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -61,8 +60,6 @@ class MainActivity : ComponentActivity() {
                         Column() {
                             val weatherState by viewModel.weatherState.collectAsState()
 
-                            // アプリ起動時だけ実行
-                            LaunchedEffect(Unit) { viewModel.fetchSimpleWeather() }
 
                             if (weatherState.showErrorDialog) {
                                 WeatherAlertDialog(

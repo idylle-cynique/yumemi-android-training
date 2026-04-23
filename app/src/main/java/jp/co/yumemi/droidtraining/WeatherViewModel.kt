@@ -21,6 +21,10 @@ class WeatherViewModel @Inject constructor(val weatherApi: YumemiWeather) : View
 
     val weatherState: StateFlow<WeatherState> = _weatherState.asStateFlow()
 
+    init {
+        fetchSimpleWeather()
+    }
+
     fun fetchSimpleWeather() {
         viewModelScope.launch {
             val newState =
