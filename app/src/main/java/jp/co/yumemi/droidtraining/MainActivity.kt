@@ -23,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,12 +32,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dagger.hilt.android.AndroidEntryPoint
 import jp.co.yumemi.droidtraining.ui.state.WeatherState
 import jp.co.yumemi.droidtraining.ui.theme.YumemiTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: WeatherViewModel by viewModels { WeatherViewModel.Factory }
+    private val viewModel: WeatherViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +60,6 @@ class MainActivity : ComponentActivity() {
                         Column() {
                             val weatherState by viewModel.weatherState.collectAsState()
 
-                            // アプリ起動時だけ実行
-                            LaunchedEffect(Unit) { viewModel.fetchSimpleWeather() }
 
                             if (weatherState.showErrorDialog) {
                                 WeatherAlertDialog(

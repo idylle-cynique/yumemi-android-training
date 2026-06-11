@@ -1,30 +1,35 @@
 package jp.co.yumemi.droidtraining
 
-import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import jp.co.yumemi.api.UnknownException
 import jp.co.yumemi.api.YumemiWeather
 import jp.co.yumemi.droidtraining.ui.state.Weather
 import jp.co.yumemi.droidtraining.ui.state.WeatherState
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class WeatherViewModel(val weatherApi: YumemiWeather) : ViewModel() {
+@HiltViewModel
+class WeatherViewModel @Inject constructor(
+    val weatherApi: YumemiWeather,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
 
-    private val _weatherState =
-            MutableStateFlow(WeatherState(weather = null, showErrorDialog = false))
+    val weatherState: StateFlow<WeatherState> = savedStateHandle.getStateFlow(
+        KEY_WEATHER_STATE,
+        WeatherState(weather = null, showErrorDialog = false),
+    )
 
-    val weatherState: StateFlow<WeatherState> = _weatherState.asStateFlow()
+    init {
+        fetchSimpleWeather()
+    }
 
     fun fetchSimpleWeather() {
         viewModelScope.launch {
-            val newState =
+            savedStateHandle[KEY_WEATHER_STATE] =
                     try {
                         val weatherEnum =
                                 when (weatherApi.fetchThrowsWeather()) {
@@ -38,24 +43,14 @@ class WeatherViewModel(val weatherApi: YumemiWeather) : ViewModel() {
                     } catch (e: UnknownException) {
                         WeatherState(weather = null, showErrorDialog = true)
                     }
-
-            _weatherState.value = newState
         }
     }
 
     fun dismissErrorDialog() {
-        _weatherState.value = _weatherState.value.copy(showErrorDialog = false)
+        savedStateHandle[KEY_WEATHER_STATE] = weatherState.value.copy(showErrorDialog = false)
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer<WeatherViewModel> {
-                val application =
-                        this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Context
-                val weatherApi = YumemiWeather(context = application)
-
-                WeatherViewModel(weatherApi = weatherApi)
-            }
-        }
+        private const val KEY_WEATHER_STATE = "weather_state"
     }
 }
