@@ -1,5 +1,6 @@
 package jp.co.yumemi.droidtraining
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,18 +9,19 @@ import jp.co.yumemi.api.UnknownException
 import jp.co.yumemi.api.YumemiWeather
 import jp.co.yumemi.droidtraining.ui.state.Weather
 import jp.co.yumemi.droidtraining.ui.state.WeatherState
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class WeatherViewModel @Inject constructor(val weatherApi: YumemiWeather) : ViewModel() {
+class WeatherViewModel @Inject constructor(
+    val weatherApi: YumemiWeather,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
 
-    private val _weatherState =
-            MutableStateFlow(WeatherState(weather = null, showErrorDialog = false))
-
-    val weatherState: StateFlow<WeatherState> = _weatherState.asStateFlow()
+    val weatherState: StateFlow<WeatherState> = savedStateHandle.getStateFlow(
+        KEY_WEATHER_STATE,
+        WeatherState(weather = null, showErrorDialog = false),
+    )
 
     init {
         fetchSimpleWeather()
@@ -27,7 +29,7 @@ class WeatherViewModel @Inject constructor(val weatherApi: YumemiWeather) : View
 
     fun fetchSimpleWeather() {
         viewModelScope.launch {
-            val newState =
+            savedStateHandle[KEY_WEATHER_STATE] =
                     try {
                         val weatherEnum =
                                 when (weatherApi.fetchThrowsWeather()) {
@@ -41,12 +43,14 @@ class WeatherViewModel @Inject constructor(val weatherApi: YumemiWeather) : View
                     } catch (e: UnknownException) {
                         WeatherState(weather = null, showErrorDialog = true)
                     }
-
-            _weatherState.value = newState
         }
     }
 
     fun dismissErrorDialog() {
-        _weatherState.value = _weatherState.value.copy(showErrorDialog = false)
+        savedStateHandle[KEY_WEATHER_STATE] = weatherState.value.copy(showErrorDialog = false)
+    }
+
+    companion object {
+        private const val KEY_WEATHER_STATE = "weather_state"
     }
 }
