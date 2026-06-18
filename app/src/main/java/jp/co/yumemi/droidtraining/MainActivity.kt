@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -60,14 +61,13 @@ class MainActivity : ComponentActivity() {
                         Column() {
                             val weatherState by viewModel.weatherState.collectAsState()
 
-
-                            if (weatherState.showErrorDialog) {
-                                WeatherAlertDialog(
-                                        reloadAction = { viewModel.fetchSimpleWeather() },
-                                        cancelAction = { viewModel.dismissErrorDialog() }
+                            when {
+                                weatherState.isLoading -> CircularProgressIndicator()
+                                weatherState.showErrorDialog -> WeatherAlertDialog(
+                                    reloadAction = { viewModel.fetchSimpleWeather() },
+                                    cancelAction = { viewModel.dismissErrorDialog() }
                                 )
-                            } else {
-                                WeatherInfo(weatherState)
+                                else -> WeatherInfo(weatherState)
                             }
                             Spacer(modifier = Modifier.height(80.dp))
                             ActionButtons({ viewModel.fetchSimpleWeather() })

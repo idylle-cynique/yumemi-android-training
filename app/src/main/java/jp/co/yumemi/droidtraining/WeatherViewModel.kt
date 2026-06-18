@@ -28,21 +28,20 @@ class WeatherViewModel @Inject constructor(
     }
 
     fun fetchSimpleWeather() {
+        savedStateHandle[KEY_WEATHER_STATE] = weatherState.value.copy(isLoading = true)
         viewModelScope.launch {
-            savedStateHandle[KEY_WEATHER_STATE] =
-                    try {
-                        val weatherEnum =
-                                when (weatherApi.fetchThrowsWeather()) {
-                                    "sunny" -> Weather.Sunny
-                                    "cloudy" -> Weather.Cloudy
-                                    "rainy" -> Weather.Rainy
-                                    else -> Weather.Snow
-                                }
-
-                        WeatherState(weather = weatherEnum, showErrorDialog = false)
-                    } catch (e: UnknownException) {
-                        WeatherState(weather = null, showErrorDialog = true)
+            try {
+                val weatherEnum =
+                    when (weatherApi.fetchWeatherAsync()) {
+                        "sunny" -> Weather.Sunny
+                        "cloudy" -> Weather.Cloudy
+                        "rainy" -> Weather.Rainy
+                        else -> Weather.Snow
                     }
+                WeatherState(weather = weatherEnum, showErrorDialog = false)
+            } catch (e: UnknownException) {
+                WeatherState(weather = null, showErrorDialog = true)
+            }
         }
     }
 
