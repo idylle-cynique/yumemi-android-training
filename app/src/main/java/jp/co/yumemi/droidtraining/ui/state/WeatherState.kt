@@ -8,7 +8,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class WeatherState(
     val weather: Weather?,
-    val showErrorDialog: Boolean
+    val showErrorDialog: Boolean,
+    val isLoading: Boolean = false
 ) : Parcelable
 
 @Parcelize
